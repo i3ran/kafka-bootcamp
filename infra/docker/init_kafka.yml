@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  init-kafka:
+    image: confluentinc/cp-kafka:${KAFKA_VERSION}
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # block until kafka is reachable
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+
+      echo -e 'Deleting kafka topics'
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic cm-core --delete --if-exists
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic cm-address --delete --if-exists
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic cm-email --delete --if-exists
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic phone --delete --if-exists
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic cm-core --replication-factor 3 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic cm-address --replication-factor 3 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic cm-email --replication-factor 3 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic cm-phone --replication-factor 3 --partitions 3
+
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+      "
+    networks:
+      - ${GLOBAL_NETWORK:-kafka}
