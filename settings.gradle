@@ -1,0 +1,4 @@
+rootProject.name = 'kafka-bootcamp'
+include 'kafka-core-producer'
+include 'kafka-core-consumer'
+
