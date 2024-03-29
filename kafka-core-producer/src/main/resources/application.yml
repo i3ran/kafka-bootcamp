@@ -9,8 +9,10 @@ logging:
 spring:
   main:
     banner-mode: OFF
+#    jackson.data-format works only when starter-web is added to the project.
   jackson:
     date-format: yyyy-MMM-dd
-#  kafka:
-#    producer:
-#      bootstrap-servers: localhost:19092
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:19092

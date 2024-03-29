@@ -1,5 +1,22 @@
 docker-compose -f .\common.yml -f .\kafka_cluster.yml up kafka-broker-1
 docker exec -it kafka-broker-1 bash
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-hello --partitions 1
+
 kafka-topics --bootstrap-server localhost:9092 --describe --topic t-hello
 kafka-topics --bootstrap-server localhost:9092 --list
+kafka-console-consumer --bootstrap-server localhost:9092 --topic t-hello
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-fixedrate --partitions 1
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-multi-partitions --partitions 3
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-employee --partitions 1
+kafka-console-consumer --bootstrap-server localhost:9092 --offset earliest --partition 0 --topic t-employee
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-employee-2 --partitions 1
+
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity --partitions 1
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-location --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-purchase-request --partitions 1
