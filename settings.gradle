@@ -1,4 +1,5 @@
 rootProject.name = 'kafka-bootcamp'
-include 'kafka-core-producer'
-include 'kafka-core-consumer'
+include 'kafka-core:kafka-core-producer'
+include 'kafka-core:kafka-core-consumer'
+include 'kafka-microservice-pattern'
 

@@ -2,7 +2,7 @@
 //    id 'java'
 //}
 
-group = 'org.example'
+group = 'com.course.kafka'
 version = '1.0-SNAPSHOT'
 
 repositories {
