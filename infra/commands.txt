@@ -20,3 +20,9 @@ kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity --pa
 
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-location --partitions 1
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-purchase-request --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-food-order --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-simple-number --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-image --partitions 2
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-invoice --partitions 2
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-invoice.DLT --partitions 2
+

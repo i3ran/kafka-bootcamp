@@ -1,0 +1,27 @@
+package com.course.kafka.producer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+import com.course.kafka.entity.Invoice;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class InvoiceProducer {
+
+	@Autowired
+	private KafkaTemplate<String, String> kafkaTemplate;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	public void send(Invoice invoice) throws JsonProcessingException {
+		var json = objectMapper.writeValueAsString(invoice);
+		//send invoices with even amount to partition 0
+		//send invoices with odd amount to partition 1
+		kafkaTemplate.send("t-invoice", invoice.getAmount() % 2, invoice.getInvoiceNumber(), json);
+	}
+
+}

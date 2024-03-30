@@ -1,6 +1,7 @@
 package com.course.kafka.config;
 
 import com.course.kafka.entity.CarLocation;
+import com.course.kafka.error.handler.GlobalErrorHandler;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,31 +63,32 @@ public class KafkaConfig {
 		return factory;
 	}
 
-//	@Bean(name = "kafkaListenerContainerFactory")
-//	public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory(
-//			ConcurrentKafkaListenerContainerFactoryConfigurer configurer) {
-//		var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
-//		configurer.configure(factory, consumerFactory());
-//
-//		factory.setCommonErrorHandler(new GlobalErrorHandler());
-//
-//		return factory;
-//	}
-/*
+	@Bean(name = "kafkaListenerContainerFactory")
+	public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory(
+			ConcurrentKafkaListenerContainerFactoryConfigurer configurer) {
+		var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
+		configurer.configure(factory, consumerFactory());
+
+		factory.setCommonErrorHandler(new GlobalErrorHandler());
+
+		return factory;
+	}
 	@Bean(name = "imageRetryContainerFactory")
 	public ConcurrentKafkaListenerContainerFactory<Object, Object> imageRetryContainerFactory(
 			ConcurrentKafkaListenerContainerFactoryConfigurer configurer) {
 		var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
 		configurer.configure(factory, consumerFactory());
 
-		factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(10_000, 3)));
+		factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(10000, 3)));
 
 		return factory;
-	}*/
+	}
 
-	/*@Bean(name = "invoiceDltContainerFactory")
+	@Bean(name = "invoiceDltContainerFactory")
 	public ConcurrentKafkaListenerContainerFactory<Object, Object> invoiceDltContainerFactory(
-			ConcurrentKafkaListenerContainerFactoryConfigurer configurer, KafkaTemplate<String, String> kafkaTemplate) {
+			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
+			KafkaTemplate<String, String> kafkaTemplate) {
+
 		var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
 		configurer.configure(factory, consumerFactory());
 
@@ -95,5 +97,5 @@ public class KafkaConfig {
 		factory.setCommonErrorHandler(new DefaultErrorHandler(recoverer, new FixedBackOff(1000, 5)));
 
 		return factory;
-	}*/
+	}
 }
