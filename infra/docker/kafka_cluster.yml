@@ -80,3 +80,29 @@ services:
       ZK_HOSTS: "zookeeper:2181"
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8888:8080
+    depends_on:
+      - kafka-broker-1
+#      - kafka2
+#      - kafka3
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-broker-1
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker-1:9092
+#      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+#      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
+#      KAFKA_CLUSTERS_1_NAME: kafka2
+#      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka2:29093
+      #      KAFKA_CLUSTERS_1_METRICS_PORT: 9998
+      #      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry1:8085
+#      KAFKA_CLUSTERS_2_NAME: kafka3
+#      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: kafka3:29094
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      - ${GLOBAL_NETWORK:-kafka}
