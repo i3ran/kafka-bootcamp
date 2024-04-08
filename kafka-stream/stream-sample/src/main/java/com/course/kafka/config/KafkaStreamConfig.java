@@ -1,7 +1,9 @@
 package com.course.kafka.config;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
+import org.springframework.kafka.core.KafkaAdmin;
 
 @Configuration
 @EnableKafkaStreams
@@ -29,5 +32,11 @@ public class KafkaStreamConfig {
 		
 		return new KafkaStreamsConfiguration(props);
 	}
-	
+
+	@Bean
+	public KafkaAdmin admin() {
+		Map<String, Object> configs = new HashMap<>();
+		configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:19092");
+		return new KafkaAdmin(configs);
+	}
 }

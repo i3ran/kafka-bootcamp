@@ -10,4 +10,7 @@ include 'kafka-stream:stream-order'
 include 'kafka-stream:stream-pattern'
 include 'kafka-stream:stream-reward'
 include 'kafka-stream:stream-storage'
+include 'schema-registry-rest-proxy:avro-tutorial'
+include 'schema-registry-rest-proxy:kafka-avro-consumer'
+include 'schema-registry-rest-proxy:kafka-avro-producer'
 

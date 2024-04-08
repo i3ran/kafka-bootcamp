@@ -13,7 +13,7 @@ import com.course.kafka.broker.message.SubscriptionOfferMessage;
 import com.course.kafka.broker.message.SubscriptionPurchaseMessage;
 import com.course.kafka.broker.message.SubscriptionUserMessage;
 
-@Configuration
+//@Configuration
 public class SubscriptionOfferTwoStream {
 
 	@Bean

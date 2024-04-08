@@ -36,19 +36,31 @@ kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-prom
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-premium-purchase --partitions 1
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-premium-user --partitions 1
 kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-subscription-purchase --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-order --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-order-masked --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-pattern-one --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-reward-one --partitions 1
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-commodity-storage-one --partitions 1
+
 kafka-topics --bootstrap-server localhost:9092 --list
 
 
 [Order][t-commodity-order] -->
-   [Mask Order][t-commodity-order-masked]-->
-      [Pattern][t-commodity-pattern]
+   [Mask Order][t-commodity-order-masked]--> mask the credit card number
+      [Pattern][t-commodity-pattern] --> Summarise total items
       [Reward][t-commodity-reward]
-      [Storage][t-commodity-storage]
+         filter large quantity
+         remove credit card
+      [Storage][t-commodity-storage] --> store to database (credit card should be masked)
+
+
 
 kafka-console-consumer --bootstrap-server localhost:9092 --offset earliest --partition 0 --topic t-employee --property print.key=true
 
 
 
+============= Kafka Connect ================
+kafka-topics --bootstrap-server localhost:9092 --create --topic t-spooldir-csv-demo --partitions 1
 
 
 

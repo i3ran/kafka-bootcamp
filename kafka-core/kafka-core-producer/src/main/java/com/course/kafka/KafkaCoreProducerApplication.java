@@ -35,8 +35,8 @@ public class KafkaCoreProducerApplication implements CommandLineRunner {
 //    @Autowired
 //    private FoodOrderProducer producer;
 //
-//    @Autowired
-//    private SimpleNumberProducer simpleNumberProducer;
+    @Autowired
+    private SimpleNumberProducer simpleNumberProducer;
 //    private PurchaseRequestProducer producer;
 //    private Employee2JsonProducer producer;
 //    private KafkaKeyProducer producer;
@@ -65,7 +65,7 @@ public class KafkaCoreProducerApplication implements CommandLineRunner {
 
 //        purchaseRequestProducerForDuplicateMessageTest(producer);
 //        foodOrderProducerTest(producer);
-//        simpleNumberProducerTest(simpleNumberProducer);
+        simpleNumberProducerTest(simpleNumberProducer);
 //            imageProducer_RetryingKafkaTest();
 //        invoiceProducer_DLTTest();
 

@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "Email",
+  "namespace": "com.course.avro.practice",
+  "fields": [
+    {
+      "name": "emailType",
+      "type": {
+        "type": "enum",
+        "name": "EmailType",
+        "symbols": ["PER", "WRK", "COM", "OTH"]
+      }
+    },{
+      "name": "email",
+      "type": "string"
+    },{
+      "name": "createdTs",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    },{
+      "name": "updatedTs",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}

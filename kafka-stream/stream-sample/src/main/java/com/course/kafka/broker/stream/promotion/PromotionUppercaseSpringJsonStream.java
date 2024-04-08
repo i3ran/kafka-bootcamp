@@ -12,7 +12,7 @@ import org.springframework.kafka.support.serializer.JsonSerde;
 
 import com.course.kafka.broker.message.PromotionMessage;
 
-@Configuration
+//@Configuration
 public class PromotionUppercaseSpringJsonStream {
 
 	@Bean

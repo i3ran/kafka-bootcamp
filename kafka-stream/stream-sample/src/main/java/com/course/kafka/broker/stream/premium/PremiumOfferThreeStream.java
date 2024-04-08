@@ -15,7 +15,7 @@ import com.course.kafka.broker.message.PremiumOfferMessage;
 import com.course.kafka.broker.message.PremiumPurchaseMessage;
 import com.course.kafka.broker.message.PremiumUserMessage;
 
-@Configuration
+//@Configuration
 public class PremiumOfferThreeStream {
 
 	@Bean

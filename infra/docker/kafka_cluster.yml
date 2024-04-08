@@ -1,26 +1,31 @@
 version: '3.7'
 services:
-  schema-registry:
-    image: confluentinc/cp-schema-registry:${KAFKA_VERSION}
-    hostname: schema-registry
-    depends_on:
-      - kafka-broker-1
-      - kafka-broker-2
-      - kafka-broker-3
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${KAFKA_VERSION}
+    hostname: zookeeper
+    container_name: zookeeper
     ports:
-      - "8081:8081"
+      - "2181:2181"
     environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-2:9092,LISTENER_LOCAL://localhost:29092
-      SCHEMA_REGISTRY_DEBUG: 'true'
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper:2888:3888
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok"
+    volumes:
+      - "./volumes/zookeeper/data:/var/lib/zookeeper/data"
+      - "./volumes/zookeeper/transactions:/var/lib/zookeeper/log"
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+
   kafka-broker-1:
     image: confluentinc/cp-kafka:${KAFKA_VERSION}
     hostname: kafka-broker-1
     container_name: kafka-broker-1
+    depends_on:
+      - zookeeper
     ports:
       - "19092:19092"
     environment:
@@ -35,51 +40,71 @@ services:
       - "./volumes/kafka/broker-1:/var/lib/kafka/data"
     networks:
       - ${GLOBAL_NETWORK:-kafka}
-  kafka-broker-2:
-    image: confluentinc/cp-kafka:${KAFKA_VERSION}
-    hostname: kafka-broker-2
-    container_name: kafka-broker-2
+
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:${KAFKA_VERSION}
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      - kafka-broker-1
+#      - kafka-broker-2
+#      - kafka-broker-3
     ports:
-      - "29092:29092"
+      - "8081:8081"
     environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:9092,LISTENER_LOCAL://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_COMPRESSION_TYPE: producer
-    volumes:
-      - "./volumes/kafka/broker-2:/var/lib/kafka/data"
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-broker-1:9092
+      SCHEMA_REGISTRY_DEBUG: 'true'
     networks:
       - ${GLOBAL_NETWORK:-kafka}
-  kafka-broker-3:
-    image: confluentinc/cp-kafka:${KAFKA_VERSION}
-    hostname: kafka-broker-3
-    container_name: kafka-broker-3
-    ports:
-      - "39092:39092"
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:9092,LISTENER_LOCAL://localhost:39092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_COMPRESSION_TYPE: producer
-    volumes:
-      - "./volumes/kafka/broker-3:/var/lib/kafka/data"
-    networks:
-      - ${GLOBAL_NETWORK:-kafka}
-  kafka-manager:
-    image: hlebalbau/kafka-manager:stable
-    restart: always
-    ports:
-      - "9000:9000"
-    environment:
-      ZK_HOSTS: "zookeeper:2181"
-    networks:
-      - ${GLOBAL_NETWORK:-kafka}
+#  kafka-broker-2:
+#    image: confluentinc/cp-kafka:${KAFKA_VERSION}
+#    hostname: kafka-broker-2
+#    container_name: kafka-broker-2
+#    ports:
+#      - "29092:29092"
+#    environment:
+#      KAFKA_BROKER_ID: 2
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:9092,LISTENER_LOCAL://localhost:29092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+#      KAFKA_COMPRESSION_TYPE: producer
+#    volumes:
+#      - "./volumes/kafka/broker-2:/var/lib/kafka/data"
+#    networks:
+#      - ${GLOBAL_NETWORK:-kafka}
+#  kafka-broker-3:
+#    image: confluentinc/cp-kafka:${KAFKA_VERSION}
+#    hostname: kafka-broker-3
+#    container_name: kafka-broker-3
+#    ports:
+#      - "39092:39092"
+#    environment:
+#      KAFKA_BROKER_ID: 3
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:9092,LISTENER_LOCAL://localhost:39092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+#      KAFKA_COMPRESSION_TYPE: producer
+#    volumes:
+#      - "./volumes/kafka/broker-3:/var/lib/kafka/data"
+#    networks:
+#      - ${GLOBAL_NETWORK:-kafka}
+#  kafka-manager:
+#    image: hlebalbau/kafka-manager:stable
+#    restart: always
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      ZK_HOSTS: "zookeeper:2181"
+#    networks:
+#      - ${GLOBAL_NETWORK:-kafka}
 
   kafka-ui:
     container_name: kafka-ui
@@ -106,3 +131,56 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+
+#  kafka-connect:
+#    image: confluentinc/cp-kafka-connect:7.1.0
+#    container_name: kafka-connect
+#    restart: unless-stopped
+#    networks:
+#      - ${GLOBAL_NETWORK:-kafka}
+#    ports:
+#      - "8083:8083"
+#    environment:
+#      CONNECT_BOOTSTRAP_SERVERS: kafka-broker-1:9092
+#      CONNECT_REST_PORT: 8083
+#      CONNECT_GROUP_ID: kafka-connect-group-id
+#      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+#      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+#      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+#      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+#      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+#      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+#      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+#      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+#      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+#      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+#      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connectors
+#    volumes:
+#      - ./volumes/kafka-connect/connectors:/data/connectors/
+#      - ./volumes/kafka-connect/inputs:/data/inputs/
+#      - ./volumes/kafka-connect/errors:/data/errors/
+#      - ./volumes/kafka-connect/processed:/data/processed/
+#    depends_on:
+#      - kafka-broker-1
+
+
+
+#  conduktor-console:
+#    image: conduktor/conduktor-console:1.22.0
+##    depends_on:
+##      - postgresql
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./volumes/conduktor_data:/var/conduktor
+#    environment:
+#      CDK_DATABASE_URL: "postgresql://conduktor:change_me@postgresql:5432/conduktor-console"
+#      CDK_MONITORING_CORTEX-URL: http://conduktor-monitoring:9009/
+#      CDK_MONITORING_ALERT-MANAGER-URL: http://conduktor-monitoring:9010/
+#      CDK_MONITORING_CALLBACK-URL: http://conduktor-platform:8080/monitoring/api/
+#      CDK_MONITORING_NOTIFICATIONS-CALLBACK-URL: http://localhost:8080
+#
+#  conduktor-monitoring:
+#    image: conduktor/conduktor-console-cortex:1.22.0
+#    environment:
+#      CDK_CONSOLE-URL: "http://conduktor-console:8080"

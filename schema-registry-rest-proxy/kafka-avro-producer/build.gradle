@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.3.0'
+}
+
+group = 'com.course.kafka'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://packages.confluent.io/maven/"
+    }
+}
+
+ext {
+    set('confluentVersion', "7.1.1")
+//    set('fakerVersion', "1.0.2")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/avro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation "io.confluent:kafka-avro-serializer:${confluentVersion}"
+//    implementation "com.github.javafaker:javafaker:${fakerVersion}"
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+tasks.register('prepareKotlinBuildScriptModel') {}
